@@ -1405,11 +1405,13 @@ async function renderMediaPage(req, res, mediaType) {
     }
 
     try {
-        // 使用代理或直连获取 TMDB 数据
+        // 服务器端调用：根据 SERVER_IN_CHINA 环境变量决定是否使用代理
         const TMDB_PROXY_URL = process.env['TMDB_PROXY_URL'];
-        const baseUrl = TMDB_PROXY_URL
-            ? `${TMDB_PROXY_URL.replace(/\/$/, '')}/api/3`  // 代理需要 /api/3 前缀
-            : 'https://api.themoviedb.org/3';
+        const serverInChina = process.env['SERVER_IN_CHINA'] === 'true';
+
+        const baseUrl = (TMDB_PROXY_URL && serverInChina)
+            ? `${TMDB_PROXY_URL.replace(/\/$/, '')}/api/3`  // 国内服务器使用代理
+            : 'https://api.themoviedb.org/3';  // 海外服务器直连
 
         const detailUrl = `${baseUrl}/${mediaType}/${id}?api_key=${TMDB_API_KEY}&language=zh-CN`;
 
@@ -1544,11 +1546,14 @@ app.get('/sitemap.xml', async (req, res) => {
 
     if (TMDB_API_KEY) {
         try {
-            // 使用代理或直连获取 TMDB 数据
+            // 服务器端调用：根据 SERVER_IN_CHINA 环境变量决定是否使用代理
+            // 如果服务器在国内，设置 SERVER_IN_CHINA=true
             const TMDB_PROXY_URL = process.env['TMDB_PROXY_URL'];
-            const baseUrl = TMDB_PROXY_URL
-                ? `${TMDB_PROXY_URL.replace(/\/$/, '')}/api/3`  // 代理需要 /api/3 前缀
-                : 'https://api.themoviedb.org/3';
+            const serverInChina = process.env['SERVER_IN_CHINA'] === 'true';
+
+            const baseUrl = (TMDB_PROXY_URL && serverInChina)
+                ? `${TMDB_PROXY_URL.replace(/\/$/, '')}/api/3`  // 国内服务器使用代理
+                : 'https://api.themoviedb.org/3';  // 海外服务器直连
 
             // 获取热门电影 (前 40 部)
             const movieUrl = `${baseUrl}/movie/popular?api_key=${TMDB_API_KEY}&language=zh-CN&page=1`;
