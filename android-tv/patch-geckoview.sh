@@ -4,7 +4,27 @@
 
 set -e
 
-GECKOVIEW_DIR="./node_modules/@web-media/capacitor-geckoview/android"
+
+# Auto-detect plugin directories to avoid errors
+PLUGIN_ROOT="./node_modules/@web-media/capacitor-geckoview"
+if [ -d "$PLUGIN_ROOT/android" ]; then
+    GECKOVIEW_DIR="$PLUGIN_ROOT/android"
+elif [ -d "$PLUGIN_ROOT/capacitor" ]; then
+    GECKOVIEW_DIR="$PLUGIN_ROOT/capacitor"
+else
+    echo "⚠️ GeckoView Android dir not found at standard paths. Searching..."
+    FOUND=$(find "$PLUGIN_ROOT" -name "build.gradle" 2>/dev/null | head -n 1)
+    if [ -n "$FOUND" ]; then
+        GECKOVIEW_DIR=$(dirname "$FOUND")
+    else
+        echo "❌ Error: Cannot find build.gradle in $PLUGIN_ROOT"
+        echo "Debug - Plugin directory listing:"
+        ls -R "$PLUGIN_ROOT" 2>/dev/null || echo "Plugin dir does not exist"
+        exit 1
+    fi
+fi
+echo "✅ Resolved GeckoView Dir: $GECKOVIEW_DIR"
+
 STATUSBAR_DIR="./node_modules/@capacitor/status-bar/android"
 
 echo "🔧 Patching GeckoView Capacitor plugin..."
