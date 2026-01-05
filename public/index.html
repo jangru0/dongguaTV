@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <!-- 核心：不发送 Referrer -->
     <meta name="referrer" content="no-referrer">
     <title>E视界 - 免费在线观看电影电视剧 | 高清影视聚合播放器</title>
@@ -200,6 +201,10 @@
             text-rendering: optimizeSpeed;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            /* 安全区域 padding（避免内容被刘海/打孔遮挡） */
+            padding-top: env(safe-area-inset-top, 0);
+            padding-left: env(safe-area-inset-left, 0);
+            padding-right: env(safe-area-inset-right, 0);
         }
 
         /* 性能优化：图片默认优化 */
